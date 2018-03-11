@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # asset rewrites
+  # css
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule css/(.*) src/assets/css/$1 [QSA,L]
+  #
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule (img|images)/(.*) src/assets/images/$1 [QSA,L]
+  #
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule js/(.*) src/assets/js/$1 [QSA,L]
+
+  # main application rewrite
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule .* src/index.php [QSA,L]
+  
+  
+</IfModule>
