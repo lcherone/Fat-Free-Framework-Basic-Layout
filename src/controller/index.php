@@ -7,9 +7,6 @@ namespace Controller;
  */
 class index extends \Base\Controller
 {
-    /**
-     * 
-     */
     public function index(\Base $f3, $params)
     {
         $this->user = new \Model\User($f3);
