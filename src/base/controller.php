@@ -16,8 +16,6 @@ class Controller extends \Prefab
      */
     public function afterRoute(\Base $f3, $params)
     {
-        if (!empty($f3->get('template'))) {
-            echo \View::instance()->render($f3->get('template'));
-        }
+        $f3->response->html();
     }
 }

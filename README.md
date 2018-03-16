@@ -10,7 +10,7 @@ Structure:
 
 ```
 ./
-|-- src
+|-- src/
 |   |-- assets
 |   |   |-- css
 |   |   |   `-- styles.css
@@ -21,8 +21,18 @@ Structure:
 |   |   |-- controller.php
 |   |   `-- model.php
 |   |-- controller
+|   |   |-- api
+|   |   |   `-- index.php
 |   |   |-- error.php
 |   |   `-- index.php
+|   |-- lib
+|   |   |-- csrf.php
+|   |   |-- flashbag.php
+|   |   |-- helper.php
+|   |   |-- jwt.php
+|   |   |-- response.php
+|   |   |-- session.php
+|   |   `-- system.php
 |   |-- model
 |   |   `-- user.php
 |   |-- view
