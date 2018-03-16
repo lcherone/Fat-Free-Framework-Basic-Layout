@@ -1,33 +1,32 @@
 <?php
+
 namespace Lib;
 
 /**
- * System
+ * System.
  */
-class System extends \Prefab
+class system extends \Prefab
 {
-    /**
-     *
-     */
     public function __construct()
     {
         $this->host_os = trim(strtoupper(strstr(php_uname(), ' ', true)));
     }
-    
+
     /**
-     * Enumerate multiple methods, saves on HTTP calls
-     * 
+     * Enumerate multiple methods, saves on HTTP calls.
+     *
      * @param array $methods
      */
     public function enumerate($methods = [])
     {
         $methods = $methods[0];
-        
+
         if (is_array($methods)) {
             $return = [];
             foreach ($methods as $method) {
                 $return[$method] = $this->$method();
             }
+
             return $return;
         } elseif (is_string($methods)) {
             return $this->$methods();
@@ -35,17 +34,18 @@ class System extends \Prefab
     }
 
     /**
-     * Check system for updates
+     * Check system for updates.
      *
      * @return int 1=has updates, 0=no updates, -1=dunno
      */
     public function system_updates()
     {
         if ($this->host_os === 'WINDOWS') {
-            $updSess = new \COM("Microsoft.Update.Session");
+            $updSess = new \COM('Microsoft.Update.Session');
             $updSrc = $updSess->CreateUpdateSearcher();
             $result = $updSrc->Search('IsInstalled=0 and Type=\'Software\' and IsHidden=0');
-            return !empty($result->Updates->Count) ? '1':'0';
+
+            return !empty($result->Updates->Count) ? '1' : '0';
         } else {
             if ($this->distro() === 'UBUNTU') {
                 $get_updates = shell_exec('apt-get -s dist-upgrade');
@@ -54,20 +54,24 @@ class System extends \Prefab
                 } else {
                     $result = 0;
                 }
-                return !empty($result) ? '1':'0';
+
+                return !empty($result) ? '1' : '0';
             }
             if ($this->distro() === 'CENTOS') {
                 exec('yum check-update', $output, $exitCode);
-                return ($exitCode == 100) ? '1':'0';
+
+                return ($exitCode == 100) ? '1' : '0';
             }
+
             return '-1';
         }
     }
 
     /**
-     * Get diskspace
+     * Get diskspace.
      *
-     * @param  string $path
+     * @param string $path
+     *
      * @return int
      */
     public function disk_space($path = '/')
@@ -75,8 +79,8 @@ class System extends \Prefab
         $path = $path[0];
 
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $disks =  $wmi->ExecQuery("Select * from Win32_LogicalDisk");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $disks = $wmi->ExecQuery('Select * from Win32_LogicalDisk');
 
             foreach ($disks as $d) {
                 if ($d->Name == $path) {
@@ -89,13 +93,14 @@ class System extends \Prefab
             $df = disk_free_space($path);
         }
 
-        return ($df > 0 && $ds > 0 && $df < $ds) ? floor($df/$ds * 100) : 0;
+        return ($df > 0 && $ds > 0 && $df < $ds) ? floor($df / $ds * 100) : 0;
     }
-    
+
     /**
-     * Get total diskspace
+     * Get total diskspace.
      *
-     * @param  string $path
+     * @param string $path
+     *
      * @return int
      */
     public function total_disk_space($path = '/')
@@ -104,8 +109,8 @@ class System extends \Prefab
 
         $ds = 0;
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $disks =  $wmi->ExecQuery("Select * from Win32_LogicalDisk");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $disks = $wmi->ExecQuery('Select * from Win32_LogicalDisk');
 
             foreach ($disks as $d) {
                 if ($d->Name == $path) {
@@ -118,27 +123,27 @@ class System extends \Prefab
 
         return $ds;
     }
-    
+
     /**
-     * Get memory usage
+     * Get memory usage.
      *
      * @return array
      */
     public function memory_stats()
     {
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $os =  $wmi->ExecQuery("SELECT * FROM Win32_OperatingSystem");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $os = $wmi->ExecQuery('SELECT * FROM Win32_OperatingSystem');
 
             foreach ($os as $m) {
                 $mem_total = $m->TotalVisibleMemorySize;
                 $mem_free = $m->FreePhysicalMemory;
             }
 
-            $prefMemory = $wmi->ExecQuery("SELECT * FROM Win32_PerfFormattedData_PerfOS_Memory");
+            $prefMemory = $wmi->ExecQuery('SELECT * FROM Win32_PerfFormattedData_PerfOS_Memory');
 
             foreach ($prefMemory as $pm) {
-                $mem_cache = $pm->CacheBytes/1024;
+                $mem_cache = $pm->CacheBytes / 1024;
             }
             $mem_buff = 0;
         } else {
@@ -147,7 +152,7 @@ class System extends \Prefab
             $mem_free = $mem_buff = $mem_cache = $mem_total = 0;
 
             while ($line = fgets($fh)) {
-                $pieces = array();
+                $pieces = [];
                 if (preg_match('/^MemTotal:\s+(\d+)\skB$/', $line, $pieces)) {
                     $mem_total = $pieces[1];
                 }
@@ -165,15 +170,15 @@ class System extends \Prefab
             fclose($fh);
         }
 
-        $result['used']  = round(($mem_total - ($mem_buff + $mem_cache + $mem_free)) * 100 / $mem_total);
+        $result['used'] = round(($mem_total - ($mem_buff + $mem_cache + $mem_free)) * 100 / $mem_total);
         $result['cache'] = round(($mem_cache + $mem_buff) * 100 / $mem_total);
-        $result['free']  = round($mem_free * 100 / $mem_total);
+        $result['free'] = round($mem_free * 100 / $mem_total);
 
         return $result;
     }
-    
+
     /**
-     * Get memory total bytes
+     * Get memory total bytes.
      *
      * @return int
      */
@@ -181,8 +186,8 @@ class System extends \Prefab
     {
         $mem_total = 0;
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $os =  $wmi->ExecQuery("SELECT * FROM Win32_OperatingSystem");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $os = $wmi->ExecQuery('SELECT * FROM Win32_OperatingSystem');
 
             foreach ($os as $m) {
                 $mem_total = $m->TotalVisibleMemorySize;
@@ -191,7 +196,7 @@ class System extends \Prefab
             $fh = fopen('/proc/meminfo', 'r');
 
             while ($line = fgets($fh)) {
-                $pieces = array();
+                $pieces = [];
                 if (preg_match('/^MemTotal:\s+(\d+)\skB$/', $line, $pieces)) {
                     $mem_total = $pieces[1];
                 }
@@ -201,17 +206,17 @@ class System extends \Prefab
 
         return $mem_total;
     }
-    
+
     /**
-     * Get CPU usage in percentage
+     * Get CPU usage in percentage.
      *
      * @return int
      */
     public function server_cpu_usage()
     {
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $cpus = $wmi->ExecQuery("SELECT LoadPercentage FROM Win32_Processor");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $cpus = $wmi->ExecQuery('SELECT LoadPercentage FROM Win32_Processor');
 
             foreach ($cpus as $cpu) {
                 $return = $cpu->LoadPercentage;
@@ -219,9 +224,10 @@ class System extends \Prefab
         } else {
             $return = shell_exec('top -d 0.5 -b -n2 | grep "Cpu(s)"|tail -n 1 | awk \'{print $2 + $4}\'');
         }
+
         return trim($return);
     }
-    
+
     /**
      * Get system machine-id
      *  - Generates one if does not have one (windows).
@@ -237,36 +243,39 @@ class System extends \Prefab
         if (file_exists('/var/lib/dbus/machine-id')) {
             $id = trim(`cat /var/lib/dbus/machine-id`);
             file_put_contents('./machine-id', $id);
+
             return $id;
         }
 
         if (file_exists('/etc/machine-id')) {
             $id = trim(`cat /etc/machine-id`);
             file_put_contents('./machine-id', $id);
+
             return $id;
         }
 
         $id = sha1(uniqid(true));
         file_put_contents('./machine-id', $id);
+
         return $id;
     }
-    
+
     /**
-     * Get netstat output
+     * Get netstat output.
      *
      * @return string
      */
     public function netstat($option = '-ant', $parse = true)
     {
         $option = $option[0];
-        
+
         $result = shell_exec('netstat '.$option);
-        
+
         if ($parse) {
             $lines = explode(PHP_EOL, $result);
             unset($lines[0]);
             unset($lines[1]);
-                 
+
             $columns = [
                 'Proto',
                 'Recv-Q',
@@ -277,7 +286,7 @@ class System extends \Prefab
                 'PID/Program',
                 'Process Name',
             ];
-            
+
             $result = [];
             foreach ($lines as $row => $line) {
                 $column = array_values(array_filter(explode(' ', $line), 'strlen'));
@@ -286,27 +295,27 @@ class System extends \Prefab
                 }
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
-     * Get system architecture
+     * Get system architecture.
      *
      * @return string
      */
     public function arch()
     {
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $cpu=  $wmi->ExecQuery("Select * from Win32_Processor");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $cpu = $wmi->ExecQuery('Select * from Win32_Processor');
 
             foreach ($cpu as $c) {
                 $arch = '32-bit';
                 $cpu_arch = $c->AddressWidth;
 
                 if ($cpu_arch != 32) {
-                    $os = $wmi->ExecQuery("Select * from Win32_OperatingSystem");
+                    $os = $wmi->ExecQuery('Select * from Win32_OperatingSystem');
 
                     foreach ($os as $o) {
                         if ($o->Version >= 6.0) {
@@ -318,19 +327,20 @@ class System extends \Prefab
         } else {
             $arch = shell_exec('arch');
         }
+
         return $arch;
     }
-    
+
     /**
-     * Get system hostname
+     * Get system hostname.
      *
      * @return string
      */
     public function hostname()
     {
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $computer = $wmi->ExecQuery("SELECT * FROM Win32_ComputerSystem");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $computer = $wmi->ExecQuery('SELECT * FROM Win32_ComputerSystem');
 
             foreach ($computer as $c) {
                 $hostname = trim($c->Name);
@@ -338,11 +348,12 @@ class System extends \Prefab
         } else {
             $hostname = shell_exec('hostname');
         }
+
         return trim($hostname);
     }
-    
+
     /**
-     * Get system last logins
+     * Get system last logins.
      *
      * @return string
      */
@@ -352,7 +363,7 @@ class System extends \Prefab
 
         if ($parse) {
             $lines = explode(PHP_EOL, $result);
-            
+
             // detect end by empty line space
             $end = 0;
             foreach ($lines as $no => $line) {
@@ -379,7 +390,7 @@ class System extends \Prefab
                 'Disconnected',
                 'Duration',
             ];
-            
+
             // generic match rows for columns and set into return
             $result = [];
             foreach ($lines as $row => $line) {
@@ -388,17 +399,17 @@ class System extends \Prefab
                     $result[$row][$key] = @$column[$col];
                 }
             }
-            
+
             // fix
             $fix = [];
             foreach ($result as $key => $row) {
                 if ($row['User'] == 'reboot') {
                     $fix[] = [
-                        'User' => 'Reboot',
-                        'Terminal' => '',
-                        'Date' => '',
+                        'User'         => 'Reboot',
+                        'Terminal'     => '',
+                        'Date'         => '',
                         'Disconnected' => '',
-                        'Duration' => '',
+                        'Duration'     => '',
                     ];
                 } else {
                     if ($row['Duration'] == 'no') {
@@ -407,24 +418,24 @@ class System extends \Prefab
                     if ($row['Disconnected'] == '-') {
                         $row['Disconnected'] = '';
                     }
-                    
+
                     $fix[] = [
-                        'User' => $row['User'],
-                        'Terminal' => $row['Terminal'].''.$row['Display'],
-                        'Date' => $row['Day'].' '.$row['Month'].' '.$row['Day Date'].' '.$row['Day Time'],
+                        'User'         => $row['User'],
+                        'Terminal'     => $row['Terminal'].''.$row['Display'],
+                        'Date'         => $row['Day'].' '.$row['Month'].' '.$row['Day Date'].' '.$row['Day Time'],
                         'Disconnected' => $row['Disconnected'],
-                        'Duration' => trim($row['Duration'], '()'),
+                        'Duration'     => trim($row['Duration'], '()'),
                     ];
                 }
             }
             $result = $fix;
         }
-        
+
         return $result;
     }
-    
+
     /**
-     * Get system process tree
+     * Get system process tree.
      *
      * @return string
      */
@@ -432,9 +443,9 @@ class System extends \Prefab
     {
         return shell_exec('pstree');
     }
-    
+
     /**
-     * Get system top output
+     * Get system top output.
      *
      * @param string
      */
@@ -459,10 +470,10 @@ class System extends \Prefab
             foreach (range(0, $start) as $key) {
                 unset($lines[$key]);
             }
-            
+
             //remove column line
-            unset($lines[$start+1]);
-            
+            unset($lines[$start + 1]);
+
             // define columns
             $columns = [
                 'PID',
@@ -476,9 +487,9 @@ class System extends \Prefab
                 '%CPU',
                 '%MEM',
                 'TIME+',
-                'COMMAND'
+                'COMMAND',
             ];
-            
+
             // match rows for columns and set into return
             $result = [];
             foreach ($lines as $row => $line) {
@@ -491,17 +502,17 @@ class System extends \Prefab
 
         return $result;
     }
-    
+
     /**
-     * Get system name/kernel version
+     * Get system name/kernel version.
      *
      * @return string
      */
     public function uname()
     {
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $os=  $wmi->ExecQuery("Select * from Win32_OperatingSystem");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $os = $wmi->ExecQuery('Select * from Win32_OperatingSystem');
 
             foreach ($os as $o) {
                 $osname = explode('|', $o->Name);
@@ -510,11 +521,12 @@ class System extends \Prefab
         } else {
             $uname = shell_exec('uname -rs');
         }
+
         return $uname;
     }
-    
+
     /**
-     * Get system CPU info output
+     * Get system CPU info output.
      *
      * @param string
      */
@@ -522,9 +534,9 @@ class System extends \Prefab
     {
         return trim(shell_exec('cat /proc/cpuinfo'));
     }
-    
+
     /**
-     * Get current network usage - Bit slow and not reliable
+     * Get current network usage - Bit slow and not reliable.
      */
     // public function netusage($direction = 'tx')
     // {
@@ -537,9 +549,9 @@ class System extends \Prefab
     //         return shell_exec('S=2; F=/sys/class/net/eth0/statistics/rx_bytes; X=`cat $F`; sleep $S; Y=`cat $F`; BPS="$(((Y-X)/S))"; echo $BPS');
     //     }
     // }
-    
+
     /**
-     * Get system load
+     * Get system load.
      *
      * @return string
      */
@@ -547,9 +559,9 @@ class System extends \Prefab
     {
         return shell_exec('cat /proc/loadavg');
     }
-    
+
     /**
-     * Get disk file system table
+     * Get disk file system table.
      *
      * @return string
      */
@@ -560,12 +572,12 @@ class System extends \Prefab
         } else {
             $result = '';
         }
-        
+
         if ($parse) {
             if (empty($result)) {
                 return [];
             }
-            
+
             $lines = explode(PHP_EOL, $result);
             unset($lines[0]);
 
@@ -576,9 +588,9 @@ class System extends \Prefab
                 'Used',
                 'Avail',
                 'Used (%)',
-                'Mounted'
+                'Mounted',
             ];
-            
+
             $result = [];
             foreach ($lines as $row => $line) {
                 $column = array_values(array_filter(explode(' ', $line), 'strlen'));
@@ -587,20 +599,20 @@ class System extends \Prefab
                 }
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
-     * Get system uptime
+     * Get system uptime.
      */
     public function uptime($option = '-p')
     {
         $option = $option[0];
 
         if ($this->host_os === 'WINDOWS') {
-            $wmi = new \COM("winmgmts:\\\\.\\root\\cimv2");
-            $os = $wmi->ExecQuery("SELECT * FROM Win32_OperatingSystem");
+            $wmi = new \COM('winmgmts:\\\\.\\root\\cimv2');
+            $os = $wmi->ExecQuery('SELECT * FROM Win32_OperatingSystem');
 
             foreach ($os as $o) {
                 $date = explode('.', $o->LastBootUpTime);
@@ -613,11 +625,12 @@ class System extends \Prefab
         } else {
             $uptime = trim(shell_exec('uptime '.$option));
         }
+
         return $uptime;
     }
-    
+
     /**
-     * Ping a server and return timing
+     * Ping a server and return timing.
      *
      * @return float
      */
@@ -625,9 +638,9 @@ class System extends \Prefab
     {
         $host = $host[0];
 
-        $start  = microtime(true);
-        $file   = @fsockopen($host, 80, $errno, $errstr, 5);
-        $stop   = microtime(true);
+        $start = microtime(true);
+        $file = @fsockopen($host, 80, $errno, $errstr, 5);
+        $stop = microtime(true);
         $status = 0;
 
         if (!$file) {
@@ -639,9 +652,9 @@ class System extends \Prefab
 
         return $status;
     }
-    
+
     /**
-     * Get system distro
+     * Get system distro.
      *
      * @return string
      */
@@ -649,30 +662,34 @@ class System extends \Prefab
     {
         if (file_exists('/etc/redhat-release')) {
             $centos_array = explode(' ', file_get_contents('/etc/redhat-release'));
+
             return strtoupper($centos_array[0]);
         }
 
         if (file_exists('/etc/os-release')) {
             preg_match('/ID=([a-zA-Z]+)/', file_get_contents('/etc/os-release'), $matches);
+
             return strtoupper($matches[1]);
         }
     }
-    
+
     /**
-     * Drop memory caches
+     * Drop memory caches.
      *
      * @requires root
+     *
      * @return void
      */
     public function drop_cache()
     {
         shell_exec('echo 1 > /proc/sys/vm/drop_caches');
     }
-    
+
     /**
-     * Clear swapspace
+     * Clear swapspace.
      *
      * @requires root
+     *
      * @return void
      */
     public function clear_swap()
@@ -680,11 +697,12 @@ class System extends \Prefab
         shell_exec('swapoff -a');
         shell_exec('swapon -a');
     }
-    
+
     /**
-     * Reboot the system
+     * Reboot the system.
      *
      * @requires root
+     *
      * @return void
      */
     public function reboot()

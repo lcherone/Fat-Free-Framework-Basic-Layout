@@ -1,15 +1,12 @@
 <?php
+
 namespace Controller;
 
 /**
- * Index Controller
- * 
+ * Index Controller.
  */
-class Index extends \Base\Controller
+class index extends \Base\Controller
 {
-    /**
-     *
-     */
     public function index(\Base $f3, $params)
     {
         $this->user = new \Model\User($f3);
@@ -17,11 +14,10 @@ class Index extends \Base\Controller
         //
         $f3->mset([
             'template' => 'src/view/template.php',
-            'page' => [
+            'page'     => [
                 'title' => 'Home',
-                'body' => \View::instance()->render('src/view/index/index.php')
-            ]
+                'body'  => \View::instance()->render('src/view/index/index.php'),
+            ],
         ]);
     }
-
 }

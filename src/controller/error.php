@@ -1,25 +1,21 @@
 <?php
+
 namespace Controller;
 
 /**
- * Index Controller
- * 
+ * Index Controller.
  */
-class Error extends \Base\Controller
+class error extends \Base\Controller
 {
-    /**
-     *
-     */
     public function display(\Base $f3, $params)
     {
         //
         $f3->mset([
             'template' => 'src/view/template.php',
-            'page' => [
+            'page'     => [
                 'title' => $f3->get('ERROR.status'),
-                'body' => \View::instance()->render('src/view/error/'.$f3->get('ERROR.code').'.php')
-            ]
+                'body'  => \View::instance()->render('src/view/error/'.$f3->get('ERROR.code').'.php'),
+            ],
         ]);
     }
-
 }

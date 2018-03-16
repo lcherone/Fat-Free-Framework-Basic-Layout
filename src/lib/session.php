@@ -1,14 +1,14 @@
 <?php
+
 namespace Lib;
 
 use RedBeanPHP\R;
 
 /**
- * Session class
+ * Session class.
  */
-class Session extends \Prefab
+class session extends \Prefab
 {
-
     public function __construct(\Base $f3)
     {
         $this->f3 = $f3;
@@ -64,30 +64,30 @@ class Session extends \Prefab
             // Store sessions in database
             // Set handler to overide SESSION
             session_set_save_handler(
-                array($this, "_open"),
-                array($this, "_close"),
-                array($this, "_read"),
-                array($this, "_write"),
-                array($this, "_destroy"),
-                array($this, "_gc")
+                [$this, '_open'],
+                [$this, '_close'],
+                [$this, '_read'],
+                [$this, '_write'],
+                [$this, '_destroy'],
+                [$this, '_gc']
             );
 
             // cookie params
-            session_set_cookie_params( 
-                strtotime('+1 month'), 
-                '/', 
+            session_set_cookie_params(
+                strtotime('+1 month'),
+                '/',
                 '.'.$_SERVER['HTTP_HOST']
-            ); 
+            );
 
             //
-            session_name('SID'); 
+            session_name('SID');
 
             register_shutdown_function('session_write_close');
         }
 
-        ini_set("session.entropy_file", "/dev/urandom");
-        ini_set("session.entropy_length", "512");
-        ini_set("session.hash_function", "sha256");
+        ini_set('session.entropy_file', '/dev/urandom');
+        ini_set('session.entropy_length', '512');
+        ini_set('session.hash_function', 'sha256');
 
         // Start the session
         session_start();
@@ -95,9 +95,6 @@ class Session extends \Prefab
         define('SID', session_id());
     }
 
-    /**
-     * 
-     */
     private function getIPAddress()
     {
         if (!empty($_SERVER['HTTP_CLIENT_IP']) && filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
@@ -107,11 +104,12 @@ class Session extends \Prefab
         } else {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
+
         return preg_replace("([^0-9\.])", '', $ip);
     }
 
     /**
-     * Open
+     * Open.
      */
     public function _open()
     {
@@ -119,7 +117,7 @@ class Session extends \Prefab
     }
 
     /**
-     * Close
+     * Close.
      */
     public function _close()
     {
@@ -127,8 +125,8 @@ class Session extends \Prefab
     }
 
     /**
-     * Read
-     * 
+     * Read.
+     *
      * IP is checked against the session id, to prevent session hijacking
      */
     public function _read($id)
@@ -139,7 +137,7 @@ class Session extends \Prefab
     }
 
     /**
-     * Write
+     * Write.
      */
     public function _write($id, $data)
     {
@@ -156,20 +154,22 @@ class Session extends \Prefab
     }
 
     /**
-     * Destroy
-     * 
+     * Destroy.
+     *
      * Also directly called on logout:
+     *
      * @see \App\Framework\Session::logout()
      */
     public function _destroy($id)
     {
         // Set query
         R::exec('DELETE FROM sessions WHERE sid = ?', [$id]);
+
         return true;
     }
 
     /**
-     * Garbage Collection
+     * Garbage Collection.
      */
     public function _gc($max)
     {
@@ -181,5 +181,4 @@ class Session extends \Prefab
 
         return true;
     }
-
 }
