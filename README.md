@@ -1,5 +1,7 @@
 # Fat Free Framework - Base
 
+[![StyleCI](https://styleci.io/repos/124741080/shield?branch=master)](https://styleci.io/repos/124741080)
+
 This is a very simple layout for fatfree framework.
 
 ## Install
