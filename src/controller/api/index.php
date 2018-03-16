@@ -1,36 +1,32 @@
 <?php
+
 namespace Controller\Api;
 
-use \Base\View as View;
+use Base\View as View;
 
 /**
- * Index Controller
- * 
+ * Index Controller.
  */
-class Index extends \Base\Controller
+class index extends \Base\Controller
 {
-    
     public function get(\Base $f3, $params)
     {
         //set($single_use = true, $target = null)
     }
-    
+
     public function post(\Base $f3, $params)
     {
-        
     }
-    
+
     public function put(\Base $f3, $params)
     {
-        
     }
-    
+
     public function delete(\Base $f3, $params)
     {
-        
     }
-    
-    /**
+
+    /*
      *
      */
     /*public function index(\Base $f3, $params)
@@ -46,5 +42,4 @@ class Index extends \Base\Controller
             ]
         ]);
     }*/
-
 }
