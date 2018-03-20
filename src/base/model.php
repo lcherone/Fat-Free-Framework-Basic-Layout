@@ -4,7 +4,7 @@ namespace Base;
 
 use RedBeanPHP\R;
 
-class model extends \Prefab
+class Model extends \Prefab
 {
     /*
      * @var $entity

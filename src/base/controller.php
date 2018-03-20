@@ -2,7 +2,7 @@
 
 namespace Base;
 
-class controller extends \Prefab
+class Controller extends \Prefab
 {
     public function beforeRoute(\Base $f3, $params)
     {
