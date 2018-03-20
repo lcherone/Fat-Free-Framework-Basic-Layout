@@ -5,7 +5,7 @@ namespace Controller;
 /**
  * Index Controller.
  */
-class Error extends \Base\Controller
+class error extends \Base\Controller
 {
     public function display(\Base $f3, $params)
     {

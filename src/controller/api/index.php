@@ -2,12 +2,10 @@
 
 namespace Controller\Api;
 
-use Base\View as View;
-
 /**
  * Index Controller.
  */
-class Index extends \Base\Controller
+class index extends \Base\Controller
 {
     public function get(\Base $f3, $params)
     {

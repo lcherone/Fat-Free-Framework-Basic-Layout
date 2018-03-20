@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-class Flashbag extends \Prefab
+class flashbag extends \Prefab
 {
     /*
      * @var object $f3
