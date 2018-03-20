@@ -7,7 +7,7 @@ use RedBeanPHP\R;
 /**
  * Session class.
  */
-class session extends \Prefab
+class Session extends \Prefab
 {
     public function __construct(\Base $f3)
     {

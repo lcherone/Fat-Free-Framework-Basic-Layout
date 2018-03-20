@@ -5,7 +5,7 @@ namespace Controller\Api;
 /**
  * Index Controller.
  */
-class index extends \Base\Controller
+class Index extends \Base\Controller
 {
     public function get(\Base $f3, $params)
     {

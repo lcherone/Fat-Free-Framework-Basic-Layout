@@ -5,7 +5,7 @@ namespace Controller;
 /**
  * Index Controller.
  */
-class index extends \Base\Controller
+class Index extends \Base\Controller
 {
     public function index(\Base $f3, $params)
     {

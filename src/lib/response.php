@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-class response extends \Prefab
+class Response extends \Prefab
 {
     public function __construct(\Base $f3)
     {

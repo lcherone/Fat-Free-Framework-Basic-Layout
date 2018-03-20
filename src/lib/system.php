@@ -5,7 +5,7 @@ namespace Lib;
 /**
  * System.
  */
-class system extends \Prefab
+class System extends \Prefab
 {
     public function __construct()
     {

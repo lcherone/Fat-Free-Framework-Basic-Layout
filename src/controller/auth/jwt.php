@@ -5,7 +5,7 @@ namespace Controller\Auth;
 /**
  * JWT auth controller.
  */
-class jwt
+class Jwt
 {
     public function beforeRoute(\Base $f3, $params)
     {
