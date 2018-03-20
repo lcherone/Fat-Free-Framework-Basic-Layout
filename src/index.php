@@ -27,9 +27,9 @@ $f3->set('CORS.ttl', 300);
 $f3->set('f3', $f3);
 
 // load libs
-$f3->set('session', \Lib\session::instance($f3));
+$f3->set('session', \Lib\Session::instance($f3));
 $f3->set('cache', \Cache::instance());
-$f3->set('response', \Lib\response::instance($f3));
+$f3->set('response', \Lib\Response::instance($f3));
 //$f3->set('helper',   \Lib\helper::instance($f3));
 //$f3->set('flashbag', \Lib\flashbag::instance($f3));
 

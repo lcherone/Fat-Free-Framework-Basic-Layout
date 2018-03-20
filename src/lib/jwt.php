@@ -16,7 +16,7 @@ namespace Lib;
  *
  * @link     https://github.com/firebase/php-jwt
  */
-final class jwt extends \Prefab
+final class JWT extends \Prefab
 {
     public static function checkAuthThen($callback)
     {

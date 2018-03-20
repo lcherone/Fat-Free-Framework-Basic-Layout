@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  
+
   # asset rewrites
   # css
   RewriteCond %{REQUEST_FILENAME} !-f
@@ -11,10 +11,12 @@
   #
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule js/(.*) src/assets/js/$1 [QSA,L]
+  #
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^_dist/(.*) src/_dist/_dist/$1 [QSA,L]
 
   # main application rewrite
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-l
+  #RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule .* src/index.php [QSA,L]
-  
+
 </IfModule>
