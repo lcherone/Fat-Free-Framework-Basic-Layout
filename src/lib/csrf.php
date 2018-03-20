@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-final class Csrf extends \Prefab
+final class csrf extends \Prefab
 {
     /*
      * @var $f3
