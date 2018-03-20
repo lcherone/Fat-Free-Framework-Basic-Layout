@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-class Helper extends \Prefab
+class helper extends \Prefab
 {
     public function __construct(\Base $f3)
     {

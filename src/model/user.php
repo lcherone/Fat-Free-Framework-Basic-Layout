@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class User extends \Base\Model
+class user extends \Base\Model
 {
     protected $f3;
 
